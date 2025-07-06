@@ -93,6 +93,34 @@ async function addUser(req, res) {
   }
 }
 
+async function getUserRecipes(req, res) {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId).populate("recipes");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user.recipes);
+  } catch (error) {
+    res.status(500).json({ message: `Server error : ${error}` });
+  }
+}
+
+async function getSavedRecipes(req, res) {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId).populate("savedRecipes");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user.savedRecipes);
+  } catch (error) {
+    res.status(500).json({ message: `Server error : ${error}` });
+  }
+}
+
 async function addRecipeToUser(req, res) {
   const userId = req.params.id;
   const { recipeId } = req.body;
@@ -100,13 +128,13 @@ async function addRecipeToUser(req, res) {
   try {
     const user = await User.findByIdAndUpdate(
       userId,
-      { $addToSet: { recipes: recipeId } }, // Utilise $addToSet pour éviter les doublons
+      { $addToSet: { savedRecipes: recipeId } }, // Utilise $addToSet pour éviter les doublons
       { new: true }
     );
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).json(user);
+    res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -134,4 +162,6 @@ export default {
   addUser,
   addRecipeToUser,
   deleteUser,
+  getUserRecipes,
+  getSavedRecipes
 };

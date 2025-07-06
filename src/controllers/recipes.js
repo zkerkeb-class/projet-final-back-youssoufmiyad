@@ -1,5 +1,6 @@
 import Recipe from "../models/Recipe.js";
 import { generateRecipeSlug } from "../utils/generateSlug.js";
+import User from "../models/User.js";
 
 async function getRecipes(req, res) {
   try {
@@ -58,33 +59,37 @@ async function getRecipeBySlug(req, res) {
 }
 
 async function addRecipe(req, res) {
-  const { title, description, ingredients, instructions } = req.body;
+  const { title, area, category, ingredients, instructions, chef, image, video } = req.body;
 
   try {
-    const slug = generateRecipeSlug(title);
+    const slug = generateRecipeSlug(title.en || title.fr || title);
     const newRecipe = new Recipe({
       title,
-      description,
+      area,
+      category,
       ingredients,
       instructions,
+      chef,
+      imageUrl:image,
+      videoUrl:video,
       slug,
     });
 
     await newRecipe.save();
     res.status(201).json(newRecipe);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error : "+ error.message });
   }
 }
 
 async function modifyRecipe(req, res) {
   const recipeId = req.params.id;
-  const { title, description, ingredients, instructions } = req.body;
+  const { title, category, area, instructions, ingredients, tags, imageUrl, videoUrl } = req.body;
 
   try {
     const updatedRecipe = await Recipe.findByIdAndUpdate(
       recipeId,
-      { title, description, ingredients, instructions },
+      { title, category, area, instructions, ingredients, tags, imageUrl, videoUrl },
       { new: true }
     );
 
@@ -92,7 +97,7 @@ async function modifyRecipe(req, res) {
       return res.status(404).json({ message: "Recipe not found" });
     }
 
-    res.status(200).json(updatedRecipe);
+    res.status(202).json(updatedRecipe);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -114,6 +119,29 @@ async function deleteRecipe(req, res) {
   }
 }
 
+async function associateRecipeWithChef(req, res) {
+  const recipeId = req.params.id;
+  const chefId = req.params.chefId;
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      chefId,
+      { $addToSet: { recipes: recipeId } },
+      { new: true, runValidators: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Chef (user) not found" });
+    }
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error associating recipe with chef:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
 export default {
   getRecipes,
   getRecipeById,
@@ -121,4 +149,5 @@ export default {
   addRecipe,
   modifyRecipe,
   deleteRecipe,
+  associateRecipeWithChef
 };
