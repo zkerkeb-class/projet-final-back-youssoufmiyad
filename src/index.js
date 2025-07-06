@@ -9,6 +9,7 @@ import userRouter from "./routes/users.js";
 import recipeRouter from "./routes/recipes.js";
 import authRouter from "./routes/authentification.js";
 import mongoose from "mongoose";
+import categoryRouter from "./routes/categories.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,6 +36,8 @@ app.use(express.json());
 app.use("/api/users", userRouter);
 
 app.use("/api/recipes", recipeRouter);
+
+app.use("/api/categories", categoryRouter);
 
 app.use("/api/auth", authRouter);
 

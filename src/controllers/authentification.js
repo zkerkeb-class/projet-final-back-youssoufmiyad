@@ -20,10 +20,7 @@ async function register(req, res) {
       });
     }
     const slug = await generateUserSlug(firstName, lastName);
-    console.log("hashing password...");
     const hashedPassword = await bcrypt.hash(password,  10);
-    console.log(`hashedPassword : ${hashedPassword}`);
-    // Créer un nouvel utilisateur
     const newUser = new User({
       firstName,
       lastName,
@@ -61,7 +58,7 @@ async function login(req, res) {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn:  remember ? "7d" : "24h",
     });
-    res.status(200).json({ token:token, user:{firstName: user.firstName, lastName:user.lastName, email:user.email, role:user.role, slug:user.slug, savedRecipes:user.savedRecipes, recipes:user.recipes} });
+    res.status(200).json({ token:token, user:{_id:user._id, firstName: user.firstName, lastName:user.lastName, email:user.email, role:user.role, slug:user.slug, savedRecipes:user.savedRecipes, recipes:user.recipes} });
   } catch (error) {
     res.status(500).json({ message: `Server error : ${error}` });
   }
