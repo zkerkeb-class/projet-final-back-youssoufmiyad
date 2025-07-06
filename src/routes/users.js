@@ -8,7 +8,9 @@ userRouter.get('/id/:id', userController.getUserById);
 userRouter.get('/:slug', userController.getUserBySlug);
 userRouter.put('/:id', userController.modifyUser);
 userRouter.post('/', userController.addUser);
-userRouter.post('/:id/recipes', userController.addRecipeToUser);
+userRouter.get('/:id/recipes', userController.getUserRecipes);
+userRouter.get('/:id/saved-recipes', userController.getSavedRecipes);
+userRouter.post('/:id/add-recipe', userController.addRecipeToUser);
 userRouter.delete('/:id', userController.deleteUser);
 
 export default userRouter;
