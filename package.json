@@ -1,0 +1,27 @@
+{
+  "name": "api-mirmaton",
+  "version": "1.0.0",
+  "description": "API pour l'authentification et la gestion des utilisateurs de mirmaton",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.1",
+    "nodemon": "^3.1.10",
+    "swagger-ui-express": "^5.0.1",
+    "translate": "^3.0.1",
+    "yamljs": "^0.3.0"
+  }
+}
